@@ -11,8 +11,8 @@ Example :
 0672 WOLVERINE AND X-MEN #3 XREGG $3.99
 
 # Usage
-Usage :
-   -c : show only comic books
-   -f file : search every title in file
-   -t title : search only this title
-   -h : show help
+    Usage :
+       -c : show only comic books
+       -f file : search every title in file
+       -t title : search only this title
+       -h : show help
