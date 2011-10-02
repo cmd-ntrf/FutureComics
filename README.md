@@ -14,5 +14,7 @@ Example :
     Usage :
        -c : show only comic books
        -f file : search every title in file
+       -g : show only gem item
+       -s : show only spot item
        -t title : search only this title
        -h : show help
