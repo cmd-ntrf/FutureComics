@@ -12,8 +12,13 @@ function usage {
 
 function grep_title {
 	title="$*"
-	echo "# $title $gem_spot_title #"
-	head -n$max_line $form | egrep -i "$title" | egrep -i $id | egrep -w $gem_spot_title | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
+	if [ $gem_spot_item ]; then
+		echo "# $title $gem_spot_item #"
+		head -n$max_line $form | egrep -i "$title" | egrep -i $id | egrep -w $gem_spot_item | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
+	else
+		echo "# $title #"
+		head -n$max_line $form | egrep -i "$title" | egrep -i $id | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
+	fi
 }
 
 base_link="http://previewsworld.com/support/previews_docs/orderforms/archive/"
@@ -22,8 +27,7 @@ id=$(date +"%h%y" | tr '[:lower:]' '[:upper:]')
 
 # Options
 comic_only=0
-single_title=2
-gem_spot_item=""
+single_title=1
 while getopts ":t:f:cgsh" opt 
 do
 	case $opt in
@@ -35,10 +39,10 @@ do
 			file=$OPTARG
 			;;
 		g)
-			gem_spot_title="GEM"
+			gem_spot_item="GEM"
 			;;
 		s)
-			gem_spot_title="SPOT"
+			gem_spot_item="SPOT"
 			;;
 		t)
 			single_title=1
@@ -67,7 +71,7 @@ if [ ! -f $form ]; then
 	curl -s $link > $form
 fi
 
-# To grab either only comics or everything else
+# To grab either only comics or everything items
 if [ $comic_only -eq 1 ]; then
 	max_line=$(sed -n "/BOOKS & MAGAZINES/=" $form)
 else
