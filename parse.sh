@@ -4,14 +4,16 @@ function usage {
 	echo "Usage :"
 	echo "   -c : show only comic books"
 	echo "   -f file : search every title in file"
+	echo "   -g : show only gem item"
+	echo "   -s : show only spot item"
 	echo "   -t title : search only this title"
 	echo "   -h : show help"
 }
 
 function grep_title {
 	title="$*"
-	echo "# $title #"
-	head -n$max_line $form | egrep -i "$title" | egrep -i $id | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
+	echo "# $title $gem_spot_title #"
+	head -n$max_line $form | egrep -i "$title" | egrep -i $id | egrep -w $gem_spot_title | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
 }
 
 base_link="http://previewsworld.com/support/previews_docs/orderforms/archive/"
@@ -21,7 +23,8 @@ id=$(date +"%h%y" | tr '[:lower:]' '[:upper:]')
 # Options
 comic_only=0
 single_title=2
-while getopts ":t:f:ch" opt 
+gem_spot_item=""
+while getopts ":t:f:cgsh" opt 
 do
 	case $opt in
 		c)
@@ -30,6 +33,12 @@ do
 		f)
 			single_title=0
 			file=$OPTARG
+			;;
+		g)
+			gem_spot_title="GEM"
+			;;
+		s)
+			gem_spot_title="SPOT"
 			;;
 		t)
 			single_title=1
@@ -53,7 +62,9 @@ done
 
 form=$id"_cof.txt"
 link=$base_link/$year/$form
-curl -s $link > $form
+if [ ! -f $form ]; then
+	curl -s $link > $form
+fi
 
 # To grab either only comics or everything else
 if [ $comic_only -eq 1 ]; then
