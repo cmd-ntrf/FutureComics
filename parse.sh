@@ -45,6 +45,7 @@ do
 			title=$OPTARG
 			;;
 		h)
+			usage
 			exit 0
 			;;
 		\?)
