@@ -12,9 +12,11 @@ Example :
 
 # Usage
     Usage :
-       -c : show only comic books
-       -f file : search every title in file
-       -g : show only gem item
-       -s : show only spot item
-       -t title : search only this title
-       -h : show help
+        -c : show only comic books
+        -f file : search every title in file
+        -g : show only gem item
+        -p id : search past form (id: mmmyy, i.e OCT11)
+        -s : show only spot item
+        -t title : search only this title
+        -h : show help
+
