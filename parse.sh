@@ -5,6 +5,7 @@ function usage {
 	echo "   -c : show only comic books"
 	echo "   -f file : search every title in file"
 	echo "   -g : show only gem item"
+	echo "   -p id : search past form (id: mmmyy, i.e OCT11)"
 	echo "   -s : show only spot item"
 	echo "   -t title : search only this title"
 	echo "   -h : show help"
@@ -12,13 +13,15 @@ function usage {
 
 function grep_title {
 	title="$*"
+	results=$(echo "$form" | egrep -i "$title" | egrep -i $id)
+	header=$title
 	if [ $gem_spot_item ]; then
-		echo "# $title $gem_spot_item #"
-		head -n$max_line $form | egrep -i "$title" | egrep -i $id | egrep -w $gem_spot_item | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
-	else
-		echo "# $title #"
-		head -n$max_line $form | egrep -i "$title" | egrep -i $id | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g"
+		header=$header" "$gem_spot_item
+		results=$(echo "$results" | egrep -w $gem_spot_item)
 	fi
+	results=$(echo "$results" | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g")
+	echo "# $header #"
+	echo "$results"
 }
 
 base_link="http://previewsworld.com/support/previews_docs/orderforms/archive/"
@@ -28,7 +31,7 @@ id=$(date +"%h%y" | tr '[:lower:]' '[:upper:]')
 # Options
 comic_only=0
 single_title=1
-while getopts ":t:f:cgsh" opt 
+while getopts ":t:f:p:cgsh" opt 
 do
 	case $opt in
 		c)
@@ -40,6 +43,10 @@ do
 			;;
 		g)
 			gem_spot_item="GEM"
+			;;
+		p)
+			id=$(echo $OPTARG | tr '[:lower:]' '[:upper:]')
+			year=20$(echo $id | sed 's/[A-Z]//g')
 			;;
 		s)
 			gem_spot_item="SPOT"
@@ -67,15 +74,18 @@ done
 
 form=$id"_cof.txt"
 link=$base_link/$year/$form
+if [ $year -lt 2010 ]; then
+	link=$base_link/$year/$id/$form
+fi
 if [ ! -f $form ]; then
-	curl -s $link > $form
+	curl -s -f $link > $form
 fi
 
 # To grab either only comics or everything items
 if [ $comic_only -eq 1 ]; then
-	max_line=$(sed -n "/BOOKS & MAGAZINES/=" $form)
+	form=$(head -n$(sed -n "/^BOOKS/=" $form) $form)
 else
-	max_line=$(sed -n '$=' $form)
+	form=$(cat $form)
 fi
 
 if [ $single_title -eq 0 ]; then
