@@ -24,9 +24,9 @@ function grep_title {
 	echo "$results"
 }
 
-base_link="http://previewsworld.com/support/previews_docs/orderforms/archive/"
+base_link="http://www.previewsworld.com/support/previews_docs/orderforms/archive"
 year=$(date +"%Y")
-id=$(date +"%h%y" | tr '[:lower:]' '[:upper:]')
+id=$(date +"%h%y" | tr 'é' 'e' | tr '[:lower:]' '[:upper:]')
 
 # Options
 comic_only=0
