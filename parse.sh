@@ -19,14 +19,14 @@ function grep_title {
 		header=$header" "$gem_spot_item
 		results=$(echo "$results" | egrep -w $gem_spot_item)
 	fi
-	results=$(echo "$results" | awk -F\t '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g")
+	results=$(echo "$results" | awk -F$'\t' '{print $2, $3, $5}' | sed "s/$id //g" | sed "s/SRP: //g")
 	echo "# $header #"
 	echo "$results"
 }
 
 base_link="http://www.previewsworld.com/support/previews_docs/orderforms/archive"
 year=$(date +"%Y")
-id=$(date +"%h%y" | tr 'é' 'e' | tr '[:lower:]' '[:upper:]')
+id=$(LANG=en_CA.UTF-8 date +"%h%y" | tr '[:lower:]' '[:upper:]')
 
 # Options
 comic_only=0
